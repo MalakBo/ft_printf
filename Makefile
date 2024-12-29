@@ -2,7 +2,7 @@
 SRC = ft_printf.c
 # Object files 
 OBJ = $(SRC:.c=.o)
-NAME=printf.a
+NAME= libftprintf.a
 # The name of the library
 CC = gcc
 # Compiler and flags

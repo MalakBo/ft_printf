@@ -1,60 +1,34 @@
 #include "ft_printf.h"
-#include <unistd.h>
-#include <stdarg.h>
-
+#include <stdio.h>
 int ft_putsstr(const char *s, const char c, int n)
 {
-    int i = 0;
-    int num = 0;
+    int i;
+    int num;
 
+    i = 0;
+    num = 0;
     if (!s && n == 0)
         return (write(1, "(null)", 6));
-
-    if (n == 0)
-        return (num += write(1, &c, 1));  // For single character printing.
-    else{
+    if (n == 1)
+        return (num += write(1, &c, 1)); 
     while (s[i] != '\0')
     {
         num += write(1, &s[i], 1);
         i++;
     }
-    }
-
-    return (num);
-}
-
-int ft_printhexa(unsigned long n, char c, int m)
-{
-    int num = 0;
-    char *hexa = "0123456789abcdef";
-
-    if (c == 'X')
-        hexa = "0123456789ABCDEF";
-    else if (c == 'p' && m == 0)
-        return (num += write(1, "(nil)", 5));
-    else if (c == 'p' && m == 1)
-        num += write(1, "0x", 2);
-
-    if (n < 16)
-        num += write(1, &hexa[n], 1);
-    else
-    {
-        num += ft_printhexa(n / 16, c, 2);
-        num += ft_printhexa(n % 16, c, 2);
-    }
-
     return (num);
 }
 
 int ft_putnbr(long n)
 {
-    int num = 0;
+    int num;
     char x;
 
+    num = 0;
     if (n < 0)
     {
         num += write(1, "-", 1);
-        n = -n; // Convert to positive number
+        n = -n;
     }
 
     if (n > 9)
@@ -70,16 +44,41 @@ int ft_putnbr(long n)
 
     return (num);
 }
+int ft_printhexa(unsigned long n, char c, int m)
+{
+    int num;
+    char *hexa;
+
+    num = 0;
+    hexa = "0123456789abcdef";
+    if (c == 'X')
+        hexa = "0123456789ABCDEF";
+    else if (c == 'p' && m == 0)
+        return (num += write(1, "0x0", 3));
+    else if (c == 'p' && m == 1)
+        num += write(1, "0x", 2);
+
+    if (n < 16)
+        num += write(1, &hexa[n], 1);
+    else
+    {
+        num += ft_printhexa(n / 16, c, 2);
+        num += ft_printhexa(n % 16, c, 2);
+    }
+
+    return (num);
+}
 
 int format_specifier(char spec, va_list argos)
 {
-    int num = 0;
-    char *p;
+    int num;
+    unsigned long p;
 
+    num = 0;
     if (spec == 'c')
-        num += ft_putsstr(0, va_arg(argos, int), 0);  // Character
+        num += ft_putsstr(0, va_arg(argos, int), 1);  // Character
     else if (spec == 's')
-        num += ft_putsstr(va_arg(argos, char *), 0, 1);  // String
+        num += ft_putsstr(va_arg(argos, char *), 0, 0);  // String
     else if (spec == 'p')
     {
         p = va_arg(argos, unsigned long);
@@ -103,9 +102,11 @@ int format_specifier(char spec, va_list argos)
 int ft_printf(const char *s, ...)
 {
     va_list argos;
-    int num = 0;
-    int i = 0;
+    int num;
+    int i;
 
+    num = 0;
+    i = 0;
     if (!s)
         return (-1);
 
@@ -115,8 +116,7 @@ int ft_printf(const char *s, ...)
     {
         if (s[i] != '%')
         {
-            num += ft_putsstr(0, s[i], 0); 
-            i++;
+            num += ft_putsstr(0, s[i], 1); 
         }
         else
         {
@@ -132,13 +132,14 @@ int ft_printf(const char *s, ...)
     return (num);
 }
 
-int main(void)
+/*int main(void)
 {
     ft_printf("a number : %d\n", 42);
     ft_printf("character : %c\n", 'A');
     ft_printf("String : %s\n", "khdama");
     ft_printf("Hexadecimal test: %x\n", 255);
-    ft_printf("Pointer test: %p\n", (void*)0x1234abcd);
+    ft_printf("Pointer test: %p\n",0x1234abcd);
     ft_printf("Percentage : %%\n");
     return (0);
 }
+*/
